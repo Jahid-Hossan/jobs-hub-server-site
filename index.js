@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors')
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 const port = process.env.PORT || 5000;
@@ -27,17 +27,37 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        const jobsCollection = client.db("JobsDB").collection("AddedJobs")
+        const jobsCollection = client.db("allJobsDB").collection("addedJobs")
 
         app.get('/listedJobs', async (req, res) => {
             try {
-                const cursor = jobsCollection.find()
+                const category = req.query.category;
+                console.log(category)
+                let query = {}
+                if (req.query?.category) {
+                    query = { category: req.query?.category }
+                }
+                const cursor = jobsCollection.find(query)
                 const result = await cursor.toArray();
+                console.log(result)
+                // console.log("cursor", cursor)
                 res.send(result)
             } catch (error) {
                 console.log(error)
             }
         })
+
+        app.get('/listedJobs/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                const query = { _id: new ObjectId(id) }
+                const result = await jobsCollection.findOne(query)
+                res.send(result);
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
 
 
         // Connect the client to the server	(optional starting in v4.7)
