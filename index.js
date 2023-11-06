@@ -48,6 +48,17 @@ async function run() {
             }
         })
 
+        app.post('/listedJobs', async (req, res) => {
+            try {
+                const job = req.body;
+                console.log(job)
+                const result = await jobsCollection.insertOne(job);
+                res.send(result)
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
         app.patch('/listedJobs/:id', async (req, res) => {
             try {
                 const id = req.params.id;
