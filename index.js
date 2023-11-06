@@ -28,11 +28,12 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         const jobsCollection = client.db("allJobsDB").collection("addedJobs")
+        const appliedCollection = client.db("allJobsDB").collection("appliedJobs")
 
         app.get('/listedJobs', async (req, res) => {
             try {
-                const category = req.query.category;
-                console.log(category)
+                const category = req.query?.category;
+                // console.log(category)
                 let query = {}
                 if (req.query?.category) {
                     query = { category: req.query?.category }
@@ -41,6 +42,25 @@ async function run() {
                 const result = await cursor.toArray();
                 console.log(result)
                 // console.log("cursor", cursor)
+                res.send(result)
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+        app.patch('/listedJobs/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                const applicantCount = req.body;
+                const filter = { _id: new ObjectId(id) }
+                console.log(applicantCount)
+                const applicantInc = {
+                    $inc: {
+                        applicantNo: 1
+                    }
+                }
+                const result = await jobsCollection.updateOne(filter, applicantInc)
+
                 res.send(result)
             } catch (error) {
                 console.log(error)
@@ -58,6 +78,16 @@ async function run() {
             }
         })
 
+        app.post('/applied', async (req, res) => {
+            try {
+                const application = req.body;
+                // console.log(application)
+                const result = await appliedCollection.insertOne(application);
+                res.send(result)
+            } catch (error) {
+                console.log(error)
+            }
+        })
 
 
         // Connect the client to the server	(optional starting in v4.7)
