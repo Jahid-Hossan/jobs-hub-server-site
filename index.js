@@ -111,10 +111,12 @@ async function run() {
                             applicantEmail: req.query?.applicantEmail,
                             category: req.query?.category
                         }
+                        console.log('true')
                     } else {
                         query = {
                             applicantEmail: req.query?.applicantEmail
                         }
+                        console.log('false')
                     }
                 }
                 const cursor = appliedCollection.find(query);
