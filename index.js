@@ -40,7 +40,7 @@ async function run() {
                 }
                 const cursor = jobsCollection.find(query)
                 const result = await cursor.toArray();
-                console.log(result)
+                // console.log(result)
                 // console.log("cursor", cursor)
                 res.send(result)
             } catch (error) {
@@ -51,7 +51,7 @@ async function run() {
         app.post('/listedJobs', async (req, res) => {
             try {
                 const job = req.body;
-                console.log(job)
+                // console.log(job)
                 const result = await jobsCollection.insertOne(job);
                 res.send(result)
             } catch (error) {
@@ -64,7 +64,7 @@ async function run() {
                 const id = req.params.id;
                 const applicantCount = req.body;
                 const filter = { _id: new ObjectId(id) }
-                console.log(applicantCount)
+                // console.log(applicantCount)
                 const applicantInc = {
                     $inc: {
                         applicantNo: 1
@@ -102,11 +102,20 @@ async function run() {
 
         app.get('/appliedJobs', async (req, res) => {
             try {
-                // const applicantEmail = req.query.applicantEmail;
-                // console.log(applicantEmail)
+                const Email = req.query.category;
+                console.log(Email)
                 let query = {};
                 if (req.query?.applicantEmail) {
-                    query = { applicantEmail: req.query?.applicantEmail }
+                    if (req.query?.category) {
+                        query = {
+                            applicantEmail: req.query?.applicantEmail,
+                            category: req.query?.category
+                        }
+                    } else {
+                        query = {
+                            applicantEmail: req.query?.applicantEmail
+                        }
+                    }
                 }
                 const cursor = appliedCollection.find(query);
                 const result = await cursor.toArray()
