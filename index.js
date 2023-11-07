@@ -100,6 +100,22 @@ async function run() {
             }
         })
 
+        app.get('/appliedJobs', async (req, res) => {
+            try {
+                // const applicantEmail = req.query.applicantEmail;
+                // console.log(applicantEmail)
+                let query = {};
+                if (req.query?.applicantEmail) {
+                    query = { applicantEmail: req.query?.applicantEmail }
+                }
+                const cursor = appliedCollection.find(query);
+                const result = await cursor.toArray()
+                res.send(result)
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
 
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
