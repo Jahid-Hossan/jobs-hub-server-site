@@ -48,6 +48,24 @@ async function run() {
             }
         })
 
+        app.get('/myJobs', async (req, res) => {
+            try {
+                const email = req.query?.email;
+                // console.log(category)
+                let query = {}
+                if (req.query?.category) {
+                    query = { email: req.query?.email }
+                }
+                const cursor = jobsCollection.find(query)
+                const result = await cursor.toArray();
+                // console.log(result)
+                // console.log("cursor", cursor)
+                res.send(result)
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
         app.post('/listedJobs', async (req, res) => {
             try {
                 const job = req.body;
