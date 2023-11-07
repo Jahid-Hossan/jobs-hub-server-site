@@ -96,6 +96,16 @@ async function run() {
             }
         })
 
+        app.delete('/listedJobs/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                const query = { _id: new ObjectId(id) }
+                const result = await jobsCollection.deleteOne(query)
+                res.send(result);
+            } catch (error) {
+                console.log(error)
+            }
+        })
         app.get('/listedJobs/:id', async (req, res) => {
             try {
                 const id = req.params.id;
