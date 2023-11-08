@@ -3,6 +3,7 @@ const app = express();
 const cors = require('cors')
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
@@ -10,13 +11,15 @@ const port = process.env.PORT || 5000;
 
 app.use(cors({
     origin: [
-        "http://localhost:5174"
+        "http://localhost:5174",
+        "http://localhost:5173",
     ],
     credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 
-// console.log(process.env.DB_USER, process.env.DB_PASS)
+console.log(process.env.ACCESS_TOKEN_SECRET)
 
 
 
@@ -31,9 +34,9 @@ const client = new MongoClient(uri, {
     }
 });
 
-
 const verifyToken = (req, res, next) => {
     const token = req?.cookies?.token;
+    console.log("toktok", token)
 
     if (!token) {
         return res.status(401).send({ message: 'unauthorized access' })
@@ -46,6 +49,7 @@ const verifyToken = (req, res, next) => {
         next();
     })
 }
+
 
 async function run() {
     try {
@@ -61,7 +65,7 @@ async function run() {
                 .cookie('token', token, {
                     httpOnly: true,
                     secure: true,
-                    sameSite: 'none',
+                    sameSite: 'none'
 
                 })
                 .send({ success: true })
@@ -233,10 +237,10 @@ async function run() {
 
         app.get('/appliedJobs', verifyToken, async (req, res) => {
             try {
-                const Email = req.query.category;
-                console.log(Email)
+                const Email = req.query.applicantEmail;
+                console.log("email", Email)
 
-                if (req.user.email !== req.query.email) {
+                if (req.user.email !== req.query.applicantEmail) {
                     return res.status(403).send({ message: 'forbidden access' })
                 }
 
