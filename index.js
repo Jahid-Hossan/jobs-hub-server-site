@@ -33,7 +33,7 @@ async function run() {
         app.get('/listedJobs', async (req, res) => {
             try {
                 const category = req.query?.category;
-                // console.log(category)
+                console.log(category)
                 let query = {}
                 if (req.query?.category) {
                     query = { category: req.query?.category }
@@ -51,20 +51,72 @@ async function run() {
         app.get('/myJobs', async (req, res) => {
             try {
                 const email = req.query?.email;
-                // console.log(category)
+                console.log(email)
                 let query = {}
-                if (req.query?.category) {
+                if (req.query?.email) {
                     query = { email: req.query?.email }
                 }
                 const cursor = jobsCollection.find(query)
                 const result = await cursor.toArray();
                 // console.log(result)
-                // console.log("cursor", cursor)
+                console.log('query', query)
                 res.send(result)
             } catch (error) {
                 console.log(error)
             }
         })
+
+
+        app.get('/myJobs/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                console.log(id)
+                const query = { _id: new ObjectId(id) }
+                const result = await jobsCollection.findOne(query)
+                res.send(result);
+                // console.log(result)
+                console.log('query', query)
+                res.send(result)
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+
+        app.put('/myJobs/:id', async (req, res) => {
+            try {
+                const id = req.params.id;
+                const newData = req.body;
+
+                const filter = { _id: new ObjectId(id) }
+                const option = { upsert: true };
+
+                console.log(Object.keys(newData).join())
+
+                const updateData = {
+                    $set: {
+                        name: newData.name,
+                        email: newData.email,
+                        title: newData.title,
+                        category: newData.category,
+                        salaryFrom: newData.salaryFrom,
+                        salaryTo: newData.salaryTo,
+                        description: newData.description,
+                        applicantNo: newData.applicantNo,
+                        image: newData.image,
+                        deadline: newData.deadline,
+                        startDate: newData.startDate
+                    }
+                }
+
+                const result = await jobsCollection.updateOne(filter, updateData, option);
+                res.send(result)
+            } catch (error) {
+                console.log(error)
+            }
+        })
+
+
 
         app.post('/listedJobs', async (req, res) => {
             try {
@@ -117,6 +169,9 @@ async function run() {
                 console.log(error)
             }
         })
+
+
+        // job applied
 
         app.post('/applied', async (req, res) => {
             try {
