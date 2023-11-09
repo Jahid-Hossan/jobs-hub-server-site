@@ -13,6 +13,8 @@ app.use(cors({
     origin: [
         "http://localhost:5174",
         "http://localhost:5173",
+        'https://jobs-hub-391a3.web.app',
+        'https://jobs-hub-391a3.firebaseapp.com'
     ],
     credentials: true
 }));
